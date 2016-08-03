@@ -46,7 +46,9 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\AiController.cs" />
      <Compile Include="Assets\Ball_Control.cs" />
+     <Compile Include="Assets\Neuron.cs" />
      <Compile Include="Assets\Paddle_Control.cs" />
      <Compile Include="Assets\Wall_Coll.cs" />
  <Reference Include="UnityEngine.UI">
