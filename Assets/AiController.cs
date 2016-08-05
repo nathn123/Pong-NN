@@ -10,6 +10,7 @@ public class AiController : MonoBehaviour {
     List<Neuron> HiddenLayer;
     int hiddenlayersize, saveinteval;
     bool save;
+	private GameObject Ball;
 
     
 	void Start () {
@@ -18,6 +19,18 @@ public class AiController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+
+		if (Ball == null)
+			Ball = GameObject.Find ("Ball");
+
+		var velocity = Ball.rigidbody2D.velocity;
+		var position = Ball.rigidbody2D.position;
+
+		float VelInputX,VelInputY
+
+		//pass values to the first layer
+		BallPosX.Input();
+		BallPosY
 	
 	}
     public void Gen()
@@ -64,6 +77,12 @@ public class AiController : MonoBehaviour {
         WeightList.Clear();
 
     }
+	public void PointLoss()
+	{
+	}
+	public void PointGain()
+	{
+	}
 
     public void Save()
     {

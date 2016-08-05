@@ -31,13 +31,13 @@ public class Ball_Control : MonoBehaviour {
     {
         //pick random direction and fire
         if (Time.time % 2 == 0)
-            this.rigidbody2D.AddForce(new Vector2(StartForce, 0.0f));
+            this.GetComponent<Rigidbody2D>().AddForce(new Vector2(StartForce, 0.0f));
         else
-            this.rigidbody2D.AddForce(new Vector2(StartForce*-1, 0.0f));
+            this.GetComponent<Rigidbody2D>().AddForce(new Vector2(StartForce*-1, 0.0f));
     }
     public void Reset()
     {
         this.transform.position = new Vector3(0, 0, 0);
-        this.rigidbody2D.velocity = new Vector2(0, 0);
+        this.GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
     }
 }

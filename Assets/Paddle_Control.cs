@@ -5,6 +5,7 @@ public class Paddle_Control : MonoBehaviour {
 
     public float MoveAmount;
     public bool human;
+	public bool Player1;
 	// Use this for initialization
 	void Start () {
 	
@@ -14,10 +15,14 @@ public class Paddle_Control : MonoBehaviour {
 	void Update () {
         if(human)
         {
-            if (Input.GetKey(KeyCode.UpArrow))
+			if (Input.GetKey(KeyCode.UpArrow) && Player1)
                 Move(true);
-            else if (Input.GetKey(KeyCode.DownArrow))
+			else if (Input.GetKey(KeyCode.DownArrow)&& Player1)
                 Move(false);
+			if (Input.GetKey(KeyCode.W) && !Player1)
+				Move(true);
+			else if (Input.GetKey(KeyCode.S)&& !Player1)
+				Move(false);
         }
             
 	
