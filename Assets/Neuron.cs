@@ -16,28 +16,33 @@ public class Neuron {
     public Neuron(string Name_,List<float> weights_, List<Neuron> Outputs_)
     {
         Name = Name_;
-        weights = weights_;
+		weights = new List<float>( weights_);
         Outputs = Outputs_;
     }
     public void Input(float inputval)
     {
-
+		input += inputval; // sum inputs from prev layer
     }
 
-    void Output()
+    public void Output()
     {
-        if(EvaluationFunction() > 0)
+        if(EvaluationFunction() > 0.5f)
         {
             for(int i = 0; i < Outputs.Count; i++)
             {
                 Outputs[i].Input(1 * weights[i]);
             }
         }
+		input = 0; // reset input for next run
 
     }
+	public float FinalOutput()
+	{
+		return EvaluationFunction();
+	}
     float EvaluationFunction()
     {
-        return 0;
+		return (float)(2 / (1 + System.Math.Exp(-2 * input)) - 1);
     }
     void Save()
     {

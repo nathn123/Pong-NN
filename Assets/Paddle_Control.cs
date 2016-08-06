@@ -13,19 +13,17 @@ public class Paddle_Control : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if(human)
-        {
-			if (Input.GetKey(KeyCode.UpArrow) && Player1)
-                Move(true);
-			else if (Input.GetKey(KeyCode.DownArrow)&& Player1)
-                Move(false);
-			if (Input.GetKey(KeyCode.W) && !Player1)
-				Move(true);
-			else if (Input.GetKey(KeyCode.S)&& !Player1)
-				Move(false);
-        }
-            
-	
+		if (human) {
+			if (Input.GetKey (KeyCode.UpArrow) && Player1)
+				Move (true);
+			else if (Input.GetKey (KeyCode.DownArrow) && Player1)
+				Move (false);
+			if (Input.GetKey (KeyCode.W) && !Player1)
+				Move (true);
+			else if (Input.GetKey (KeyCode.S) && !Player1)
+				Move (false);
+		}
+
 	}
 
     public void Move(bool Up)
