@@ -88,6 +88,7 @@ public class AiController : MonoBehaviour {
 
 		foreach (var node in HiddenLayer)
 			node.Output ();
+		Output.Output ();
 		var finalval = Output.FinalOutput ();
 		if (finalval > 0.5f)
 			controller.Move (true);
@@ -156,7 +157,7 @@ public class AiController : MonoBehaviour {
 		float error = distance +(hitdif*0.10f);
 
 
-		float delta_output = Output.FinalOutput() * (1.0f - Output.FinalOutput()) * (hitdif - Output.FinalOutput());
+		float delta_output = Output.FinalOutput() * (1.0f - Output.FinalOutput()) * (error - Output.FinalOutput());
         float[] delta_hidden = new float[HiddenLayer.Count];
         for (int i = 0; i < HiddenLayer.Count; i++)
 		{

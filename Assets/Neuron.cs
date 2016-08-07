@@ -26,19 +26,22 @@ public class Neuron {
 
     public void Output()
     {
-        if(EvaluationFunction() > 0.5f)
-        {
-            for(int i = 0; i < Outputs.Count; i++)
-            {
-                Outputs[i].Input(1 * weights[i]);
-            }
-        }
+		if (EvaluationFunction () > 0.5f) {
+			for (int i = 0; i < Outputs.Count; i++) {
+				Outputs [i].Input (1 * weights [i]);
+			}
+		} else if (EvaluationFunction () < -0.5f) {
+			for (int i = 0; i < Outputs.Count; i++) {
+				Outputs [i].Input (-1 * weights [i]);
+			}
+		}
+		output = EvaluationFunction();
 		input = 0; // reset input for next run
 
     }
 	public float FinalOutput()
 	{
-		return EvaluationFunction();
+		return output;
 	}
     float EvaluationFunction()
     {

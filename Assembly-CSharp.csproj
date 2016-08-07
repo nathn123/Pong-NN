@@ -49,7 +49,24 @@
      <Compile Include="Assets\Ball_Control.cs" />
      <Compile Include="Assets\Neuron.cs" />
      <Compile Include="Assets\Paddle_Control.cs" />
+     <Compile Include="Assets\TimeScript.cs" />
      <Compile Include="Assets\Wall_Coll.cs" />
+     <None Include="Assets\NetworkSaves\left_6.txt" />
+     <None Include="Assets\NetworkSaves\right_3.txt" />
+     <None Include="Assets\NetworkSaves\left_1.txt" />
+     <None Include="Assets\NetworkSaves\left_0.txt" />
+     <None Include="Assets\NetworkSaves\right_7.txt" />
+     <None Include="Assets\NetworkSaves\right_1.txt" />
+     <None Include="Assets\NetworkSaves\right_4.txt" />
+     <None Include="Assets\NetworkSaves\right_0.txt" />
+     <None Include="Assets\NetworkSaves\left_7.txt" />
+     <None Include="Assets\NetworkSaves\left_5.txt" />
+     <None Include="Assets\NetworkSaves\right_6.txt" />
+     <None Include="Assets\NetworkSaves\right_2.txt" />
+     <None Include="Assets\NetworkSaves\right_5.txt" />
+     <None Include="Assets\NetworkSaves\left_4.txt" />
+     <None Include="Assets\NetworkSaves\left_3.txt" />
+     <None Include="Assets\NetworkSaves\left_2.txt" />
  <Reference Include="UnityEngine.Networking">
  <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/Networking/UnityEngine.Networking.dll</HintPath>
  </Reference>

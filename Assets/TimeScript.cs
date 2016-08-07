@@ -11,12 +11,12 @@ public class TimeScript : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-        if (Input.GetKeyDown(KeyCode.KeypadPlus))
+		if (Input.GetKeyDown(KeyCode.P))
         {
             Time.timeScale *= 2;
             Debug.Log("Speed Up");
         }
-        else if (Input.GetKeyDown(KeyCode.KeypadMinus))
+		else if (Input.GetKeyDown(KeyCode.L))
         {
             Time.timeScale /= 2;
             Debug.Log("Speed Down");
