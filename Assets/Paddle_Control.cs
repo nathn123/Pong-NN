@@ -29,9 +29,9 @@ public class Paddle_Control : MonoBehaviour {
     public void Move(bool Up)
     {
         if (Up)
-            this.gameObject.transform.position = new Vector2(this.gameObject.transform.position.x, this.gameObject.transform.position.y + MoveAmount);
+			this.gameObject.transform.position = new Vector2(this.gameObject.transform.position.x, this.gameObject.transform.position.y + MoveAmount * Time.fixedDeltaTime);
         else
-            this.gameObject.transform.position = new Vector2(this.gameObject.transform.position.x, this.gameObject.transform.position.y - MoveAmount);
+			this.gameObject.transform.position = new Vector2(this.gameObject.transform.position.x, this.gameObject.transform.position.y - MoveAmount * Time.fixedDeltaTime);
 
         if (this.gameObject.transform.position.y > 3.479)
             this.gameObject.transform.position = new Vector2(this.gameObject.transform.position.x, 3.479f);

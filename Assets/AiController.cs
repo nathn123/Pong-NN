@@ -155,6 +155,7 @@ public class AiController : MonoBehaviour {
 
 		//combine the values together
 		float error = distance +(hitdif*0.10f);
+		error *= 0.1f;
 
 
 		float delta_output = Output.FinalOutput() * (1.0f - Output.FinalOutput()) * (error - Output.FinalOutput());
@@ -237,7 +238,7 @@ public class AiController : MonoBehaviour {
 	{
 		Debug.Log ("Point Gained");
 		SuccesfulHits++;
-        Learn();
+        //Learn();
         Reset();
 	}
 
