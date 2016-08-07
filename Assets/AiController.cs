@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 
 
 public class AiController : MonoBehaviour {
@@ -8,7 +9,8 @@ public class AiController : MonoBehaviour {
 	// Use this for initialization
     Neuron Output, BallPosX,BallPosY,BallVelX, BallVelY;
     List<Neuron> HiddenLayer;
-	public int hiddenlayersize, saveinteval;
+	public int hiddenlayersize, saveinteval , savenum;
+    public float learningRate;
 	int SuccesfulHits, PrevSuccesfulHits = 0; // the gradient
 	Paddle_Control controller;
     bool save, Generated;
@@ -94,11 +96,6 @@ public class AiController : MonoBehaviour {
 			
 	
 	}
-	void OnCollisionEnter2D(Collider2D col)
-	{
-		if (col.name == "Ball")
-			SuccesfulHits+0.25;
-	}
     public void Gen()
     {
         //due to constructor of the neuron, we create the network back to front
@@ -142,13 +139,13 @@ public class AiController : MonoBehaviour {
         BallVelY = new Neuron("BallPosX", WeightList, HiddenLayer);
 
 		Generated = true;
-
+        Save();
     }
 	void Learn()
 	{
 		// we need to test something to see whether the last change was good.
 		// we must first get the distance between the paddle and the ball
-
+        Debug.Log("Learning");
 		float distance  = Vector2.Distance(new Vector2(this.transform.position.x,this.transform.position.y),
 											new Vector2(Ball.transform.position.x,Ball.transform.position.y));
 		
@@ -159,68 +156,119 @@ public class AiController : MonoBehaviour {
 		float error = distance +(hitdif*0.10f);
 
 
-		float delta_output = Output.FinalOutput() * (1.0 - Output.FinalOutput()) * (hitdif - Output.FinalOutput());
+		float delta_output = Output.FinalOutput() * (1.0f - Output.FinalOutput()) * (hitdif - Output.FinalOutput());
+        float[] delta_hidden = new float[HiddenLayer.Count];
+        for (int i = 0; i < HiddenLayer.Count; i++)
+		{
+			 delta_hidden[i] = HiddenLayer[i].FinalOutput() * (1.0f - HiddenLayer[i].FinalOutput()) * (HiddenLayer[i].weights[0] *delta_output);
+            HiddenLayer[i].weights[0] += learningRate * delta_output * HiddenLayer[i].FinalOutput();
+		}
 
-
+        for (int i = 0; i < HiddenLayer.Count; i++)
+		{
+			BallPosX.weights[i] += learningRate * delta_hidden[i] * BallPosX.FinalOutput();
+		}
+                for (int i = 0; i < HiddenLayer.Count; i++)
+		{
+			BallPosY.weights[i] += learningRate * delta_hidden[i] * BallPosY.FinalOutput();
+		}
+                for (int i = 0; i < HiddenLayer.Count; i++)
+		{
+			BallVelX.weights[i] += learningRate * delta_hidden[i] * BallVelX.FinalOutput();
+		}
+                for (int i = 0; i < HiddenLayer.Count; i++)
+		{
+			BallVelY.weights[i] += learningRate * delta_hidden[i] * BallVelY.FinalOutput();
+		}
 
 	}
-	{
-		//get momentum values (delta values from last pass)
-		double[] delta_hidden = new double[nn.NumberOfHidden + 1];
-		double[] delta_outputs = new double[nn.NumberOfOutputs];
+    //{
+    //    //get momentum values (delta values from last pass)
+    //    double[] delta_hidden = new double[nn.NumberOfHidden + 1];
+    //    double[] delta_outputs = new double[nn.NumberOfOutputs];
 
-		// Get the delta value for the output layer
-		for (int i = 0; i < nn.NumberOfOutputs; i++)
-		{
-			delta_outputs[i] =
-				nn.Outputs[i] * (1.0 - nn.Outputs[i]) * (target[i] - nn.Outputs[i]);
-		}
-		// Get the delta value for the hidden layer
-		for (int i = 0; i < nn.NumberOfHidden + 1; i++)
-		{
-			double error = 0.0;
-			for (int j = 0; j < nn.NumberOfOutputs; j++)
-			{
-				error += nn.HiddenToOutputWeights[i, j] * delta_outputs[j];
-			}
-			delta_hidden[i] = nn.Hidden[i] * (1.0 - nn.Hidden[i]) * error;
-		}
-		// Now update the weights between hidden & output layer
-		for (int i = 0; i < nn.NumberOfOutputs; i++)
-		{
-			for (int j = 0; j < nn.NumberOfHidden + 1; j++)
-			{
-				//use momentum (delta values from last pass),
-				//to ensure moved in correct direction
-				nn.HiddenToOutputWeights[j, i] += nn.LearningRate * delta_outputs[i] * nn.Hidden[j];
-			}
-		}
-		// Now update the weights between input & hidden layer
-		for (int i = 0; i < nn.NumberOfHidden; i++)
-		{
-			for (int j = 0; j < nn.NumberOfInputs + 1; j++)
-			{
-				//use momentum (delta values from last pass),
-				//to ensure moved in correct direction
-				nn.InputToHiddenWeights[j, i] += nn.LearningRate * delta_hidden[i] * nn.Inputs[j];
-			}
-		}
-	}
+    //    // Get the delta value for the output layer
+    //    for (int i = 0; i < nn.NumberOfOutputs; i++)
+    //    {
+    //        delta_outputs[i] =
+    //            nn.Outputs[i] * (1.0 - nn.Outputs[i]) * (target[i] - nn.Outputs[i]);
+    //    }
+    //    // Get the delta value for the hidden layer
+    //    for (int i = 0; i < nn.NumberOfHidden + 1; i++)
+    //    {
+    //        double error = 0.0;
+    //        for (int j = 0; j < nn.NumberOfOutputs; j++)
+    //        {
+    //            error += nn.HiddenToOutputWeights[i, j] * delta_outputs[j];
+    //        }
+    //        delta_hidden[i] = nn.Hidden[i] * (1.0 - nn.Hidden[i]) * error;
+    //    }
+    //    // Now update the weights between hidden & output layer
+    //    for (int i = 0; i < nn.NumberOfOutputs; i++)
+    //    {
+    //        for (int j = 0; j < nn.NumberOfHidden + 1; j++)
+    //        {
+    //            //use momentum (delta values from last pass),
+    //            //to ensure moved in correct direction
+    //            nn.HiddenToOutputWeights[j, i] += nn.LearningRate * delta_outputs[i] * nn.Hidden[j];
+    //        }
+    //    }
+    //    // Now update the weights between input & hidden layer
+    //    for (int i = 0; i < nn.NumberOfHidden; i++)
+    //    {
+    //        for (int j = 0; j < nn.NumberOfInputs + 1; j++)
+    //        {
+    //            //use momentum (delta values from last pass),
+    //            //to ensure moved in correct direction
+    //            nn.InputToHiddenWeights[j, i] += nn.LearningRate * delta_hidden[i] * nn.Inputs[j];
+    //        }
+    //    }
+    //}
 	public void PointLoss()
 	{
 		Debug.Log ("Point Lost");
 		SuccesfulHits--;
+        Learn();
+        Reset();
 
 	}
 	public void PointGain()
 	{
 		Debug.Log ("Point Gained");
 		SuccesfulHits++;
+        Learn();
+        Reset();
 	}
+
+    public void Reset()
+    {
+        this.transform.position = new Vector3(this.transform.position.x, 0);
+        savenum++;
+        if (savenum % saveinteval == 0)
+            Save();
+    }
 
     public void Save()
     {
+        string name;
+        if (this.name == "Left Paddle")
+            name = "left";
+        else
+            name = "right";
+        string path = Application.dataPath + "/NetworkSaves/"+name+"_"+savenum.ToString()+".txt";
+        StreamWriter fileWriter = File.CreateText(path);
+        //,,, 
+        var test = BallPosX.Save();
+        fileWriter.WriteLine(BallPosX.Save());
+        fileWriter.WriteLine(BallPosY.Save());
+        fileWriter.WriteLine(BallVelX.Save());
+        fileWriter.WriteLine(BallVelY.Save());
 
+        for (int i = 0; i < HiddenLayer.Count; ++i)
+            fileWriter.WriteLine(HiddenLayer[i].Save());
+
+        fileWriter.WriteLine(Output.Save());
+        fileWriter.Close();
     }
     public void Load()
     {

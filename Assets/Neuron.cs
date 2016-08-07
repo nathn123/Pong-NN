@@ -7,7 +7,7 @@ public class Neuron {
 
 	// Use this for initialization
     float input, output;
-    List<float> weights;
+    public List<float> weights;
     List<Neuron> Outputs;
 
     [XmlAttribute("name")]
@@ -44,8 +44,15 @@ public class Neuron {
     {
 		return (float)(2 / (1 + System.Math.Exp(-2 * input)) - 1);
     }
-    void Save()
+    public string Save()
     {
+        string Data;
 
+        Data = Name + " ";
+
+        for(int i = 0; i < weights.Count; i++)
+            Data+= weights[i].ToString() + " ";
+
+        return Data;
     }
 }

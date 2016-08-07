@@ -5,6 +5,7 @@ public class Ball_Control : MonoBehaviour {
 
     public float StartForce, maxSpeed;
     public bool Testing;
+    public int bounces;
 	// Use this for initialization
 	void Start () {
 	
@@ -27,12 +28,17 @@ public class Ball_Control : MonoBehaviour {
     void OnTriggerEnter2D(Collider2D other)
     {
         Debug.Log("Ball hit trigger");
+        bounces++;
+        if (bounces > 50)
+            Go();
+
         Reset();
     }
 
     public void Go()
     {
         //pick random direction and fire
+        bounces = 0;
 		float xForce  = Random.Range((float)(StartForce*0.1),StartForce);
 		float yForce = StartForce - xForce;	
 		if (Random.Range(0,2) == 0)
