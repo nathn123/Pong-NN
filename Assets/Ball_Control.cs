@@ -27,12 +27,15 @@ public class Ball_Control : MonoBehaviour {
 	}
     void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log("Ball hit trigger");
+        
+        Reset();
+    }
+    void OnCollisionEnter2D(Collision2D col)
+    {
+        Debug.Log("Ball hit anything");
         bounces++;
         if (bounces > 50)
             Go();
-
-        Reset();
     }
 
     public void Go()
