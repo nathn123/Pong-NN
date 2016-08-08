@@ -14,7 +14,6 @@ public class AiController : MonoBehaviour {
 	int SuccesfulHits, PrevSuccesfulHits = 0; // the gradient
 	Paddle_Control controller;
     bool save, Generated;
-    public bool AllowLearning;
 	private GameObject Ball;
 
     
@@ -33,10 +32,6 @@ public class AiController : MonoBehaviour {
 
 		if (Ball == null)
 			Ball = GameObject.Find ("Ball");
-        if (Input.GetKeyDown(KeyCode.Q))
-            Save();
-        if (Input.GetKeyDown(KeyCode.T))
-            Load();
 
 		var velocity = Ball.GetComponent<Rigidbody2D>().velocity;
 		var position = Ball.GetComponent<Rigidbody2D>().position;
@@ -128,39 +123,38 @@ public class AiController : MonoBehaviour {
         {
             WeightList.Add(Random.Range(-1.0f, 1.0f));
         }
-        BallPosY = new Neuron("BallPosY", WeightList, HiddenLayer);
+        BallPosY = new Neuron("BallPosX", WeightList, HiddenLayer);
         WeightList.Clear();
 
         for (int i = 0; i < HiddenLayer.Count; ++i)
         {
             WeightList.Add(Random.Range(-1.0f, 1.0f));
         }
-        BallVelX = new Neuron("BallVelX", WeightList, HiddenLayer);
+        BallVelX = new Neuron("BallPosX", WeightList, HiddenLayer);
         WeightList.Clear();
 
         for (int i = 0; i < HiddenLayer.Count; ++i)
         {
             WeightList.Add(Random.Range(-1.0f, 1.0f));
         }
-        BallVelY = new Neuron("BallVelY", WeightList, HiddenLayer);
+        BallVelY = new Neuron("BallPosX", WeightList, HiddenLayer);
 
 		Generated = true;
         Save();
     }
 	void Learn()
 	{
-        if (!AllowLearning)
-            return;
 		// we need to test something to see whether the last change was good.
 		// we must first get the distance between the paddle and the ball
         Debug.Log("Learning");
-        float distance = Ball.transform.position.y - this.transform.position.y;
+		float distance  = Vector2.Distance(new Vector2(this.transform.position.x,this.transform.position.y),
+											new Vector2(Ball.transform.position.x,Ball.transform.position.y));
 		
 		// using the number of hits as a metric for success, to limit change of weights for one odd result due to dist
-		//float hitdif  = SuccesfulHits - PrevSuccesfulHits;
+		float hitdif  = SuccesfulHits - PrevSuccesfulHits;
 
 		//combine the values together
-        float error = distance /*+ (hitdif * 0.10f)*/;
+		float error = distance +(hitdif*0.10f);
 		error *= 0.1f;
 
 
@@ -169,29 +163,24 @@ public class AiController : MonoBehaviour {
         for (int i = 0; i < HiddenLayer.Count; i++)
 		{
 			 delta_hidden[i] = HiddenLayer[i].FinalOutput() * (1.0f - HiddenLayer[i].FinalOutput()) * (HiddenLayer[i].weights[0] *delta_output);
-             var test = learningRate * delta_output * HiddenLayer[i].FinalOutput();
-             HiddenLayer[i].UpdateWeights(0, HiddenLayer[i].weights[0] + (learningRate * (delta_output * HiddenLayer[i].FinalOutput())));
+            HiddenLayer[i].weights[0] += learningRate * delta_output * HiddenLayer[i].FinalOutput();
 		}
 
         for (int i = 0; i < HiddenLayer.Count; i++)
 		{
-            var test = learningRate * delta_hidden[i] * BallPosX.FinalOutput();
-            BallPosX.UpdateWeights(i, BallPosX.weights[i] + (learningRate * delta_hidden[i] * BallPosX.FinalOutput()));
+			BallPosX.weights[i] += learningRate * delta_hidden[i] * BallPosX.FinalOutput();
 		}
                 for (int i = 0; i < HiddenLayer.Count; i++)
 		{
-            var test = learningRate * delta_hidden[i] * BallPosY.FinalOutput();
-            BallPosY.UpdateWeights(i, BallPosY.weights[i] + (learningRate * delta_hidden[i] * BallPosY.FinalOutput()));
+			BallPosY.weights[i] += learningRate * delta_hidden[i] * BallPosY.FinalOutput();
 		}
                 for (int i = 0; i < HiddenLayer.Count; i++)
 		{
-            var test = learningRate * delta_hidden[i] * BallVelX.FinalOutput();
-            BallVelX.UpdateWeights(i, BallVelX.weights[i] + (learningRate * delta_hidden[i] * BallVelX.FinalOutput()));
+			BallVelX.weights[i] += learningRate * delta_hidden[i] * BallVelX.FinalOutput();
 		}
                 for (int i = 0; i < HiddenLayer.Count; i++)
 		{
-            var test = learningRate * delta_hidden[i] * BallVelY.FinalOutput();
-            BallVelY.UpdateWeights(i, BallVelY.weights[i] + (learningRate * delta_hidden[i] * BallVelY.FinalOutput()));
+			BallVelY.weights[i] += learningRate * delta_hidden[i] * BallVelY.FinalOutput();
 		}
 
 	}
@@ -249,7 +238,7 @@ public class AiController : MonoBehaviour {
 	{
 		Debug.Log ("Point Gained");
 		SuccesfulHits++;
-        Learn();
+        //Learn();
         Reset();
 	}
 
@@ -285,17 +274,6 @@ public class AiController : MonoBehaviour {
     }
     public void Load()
     {
-        StreamReader filereader = new StreamReader( UnityEditor.EditorUtility.OpenFilePanel("Select Network", "", "txt"));
-
-        BallPosX.Load(filereader.ReadLine());
-        BallPosY.Load(filereader.ReadLine());
-        BallVelX.Load(filereader.ReadLine());
-        BallVelY.Load(filereader.ReadLine());
-
-        for (int i = 0; i < HiddenLayer.Count; ++i)
-            HiddenLayer[i].Load(filereader.ReadLine());
-
-        Output.Load(filereader.ReadLine());
 
     }
 }
