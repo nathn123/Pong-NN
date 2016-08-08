@@ -21,7 +21,13 @@ public class Neuron {
     }
     public void Input(float inputval)
     {
-		input += inputval; // sum inputs from prev layer
+        input += inputval; // sum inputs from prev layer
+    }
+
+    public void UpdateWeights(int pos, float val)
+    {
+        weights.RemoveAt(pos);
+        weights.Insert(pos, val);
     }
 
     public void Output()
@@ -57,5 +63,14 @@ public class Neuron {
             Data+= weights[i].ToString() + " ";
 
         return Data;
+    }
+    public void Load(string data)
+    {
+       var splitdata =  data.Split(' ');
+       Name = splitdata[0];
+        weights = new List<float>();
+        for (int i = 1; i < splitdata.Length-1; ++i)
+            weights.Add(float.Parse(splitdata[i]));
+
     }
 }
