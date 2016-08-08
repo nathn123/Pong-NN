@@ -14,7 +14,7 @@ public class AiController : MonoBehaviour {
 	int SuccesfulHits, PrevSuccesfulHits = 0; // the gradient
 	Paddle_Control controller;
     bool save, Generated;
-    public bool AllowLearning;
+    public bool AllowLearning, testing;
 	private GameObject Ball;
 
     
@@ -25,11 +25,16 @@ public class AiController : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-		if (!Generated)
+		if (!Generated && testing)
 			Gen ();
+		else
+			Load(Application.dataPath+"/NetworkSaves/right_8_TestCase.txt");
 
 		if (controller == null)
 			controller = this.GetComponent<Paddle_Control> ();
+
+		if (controller.human)
+			return;
 
 		if (Ball == null)
 			Ball = GameObject.Find ("Ball");
@@ -195,48 +200,6 @@ public class AiController : MonoBehaviour {
 		}
 
 	}
-    //{
-    //    //get momentum values (delta values from last pass)
-    //    double[] delta_hidden = new double[nn.NumberOfHidden + 1];
-    //    double[] delta_outputs = new double[nn.NumberOfOutputs];
-
-    //    // Get the delta value for the output layer
-    //    for (int i = 0; i < nn.NumberOfOutputs; i++)
-    //    {
-    //        delta_outputs[i] =
-    //            nn.Outputs[i] * (1.0 - nn.Outputs[i]) * (target[i] - nn.Outputs[i]);
-    //    }
-    //    // Get the delta value for the hidden layer
-    //    for (int i = 0; i < nn.NumberOfHidden + 1; i++)
-    //    {
-    //        double error = 0.0;
-    //        for (int j = 0; j < nn.NumberOfOutputs; j++)
-    //        {
-    //            error += nn.HiddenToOutputWeights[i, j] * delta_outputs[j];
-    //        }
-    //        delta_hidden[i] = nn.Hidden[i] * (1.0 - nn.Hidden[i]) * error;
-    //    }
-    //    // Now update the weights between hidden & output layer
-    //    for (int i = 0; i < nn.NumberOfOutputs; i++)
-    //    {
-    //        for (int j = 0; j < nn.NumberOfHidden + 1; j++)
-    //        {
-    //            //use momentum (delta values from last pass),
-    //            //to ensure moved in correct direction
-    //            nn.HiddenToOutputWeights[j, i] += nn.LearningRate * delta_outputs[i] * nn.Hidden[j];
-    //        }
-    //    }
-    //    // Now update the weights between input & hidden layer
-    //    for (int i = 0; i < nn.NumberOfHidden; i++)
-    //    {
-    //        for (int j = 0; j < nn.NumberOfInputs + 1; j++)
-    //        {
-    //            //use momentum (delta values from last pass),
-    //            //to ensure moved in correct direction
-    //            nn.InputToHiddenWeights[j, i] += nn.LearningRate * delta_hidden[i] * nn.Inputs[j];
-    //        }
-    //    }
-    //}
 	public void PointLoss()
 	{
 		Debug.Log ("Point Lost");
@@ -285,17 +248,32 @@ public class AiController : MonoBehaviour {
     }
     public void Load()
     {
-        StreamReader filereader = new StreamReader( UnityEditor.EditorUtility.OpenFilePanel("Select Network", "", "txt"));
-
-        BallPosX.Load(filereader.ReadLine());
-        BallPosY.Load(filereader.ReadLine());
-        BallVelX.Load(filereader.ReadLine());
-        BallVelY.Load(filereader.ReadLine());
-
-        for (int i = 0; i < HiddenLayer.Count; ++i)
-            HiddenLayer[i].Load(filereader.ReadLine());
-
-        Output.Load(filereader.ReadLine());
-
+//        StreamReader filereader = new StreamReader( UnityEditor.EditorUtility.OpenFilePanel("Select Network", "", "txt"));
+//
+//        BallPosX.Load(filereader.ReadLine());
+//        BallPosY.Load(filereader.ReadLine());
+//        BallVelX.Load(filereader.ReadLine());
+//        BallVelY.Load(filereader.ReadLine());
+//
+//        for (int i = 0; i < HiddenLayer.Count; ++i)
+//            HiddenLayer[i].Load(filereader.ReadLine());
+//
+//        Output.Load(filereader.ReadLine());
+//
     }
+	public void Load(string path)
+	{
+		StreamReader filereader = new StreamReader(path);
+		Gen ();
+		BallPosX.Load(filereader.ReadLine());
+		BallPosY.Load(filereader.ReadLine());
+		BallVelX.Load(filereader.ReadLine());
+		BallVelY.Load(filereader.ReadLine());
+
+		for (int i = 0; i < HiddenLayer.Count; ++i)
+			HiddenLayer[i].Load(filereader.ReadLine());
+
+		Output.Load(filereader.ReadLine());
+
+	}
 }
